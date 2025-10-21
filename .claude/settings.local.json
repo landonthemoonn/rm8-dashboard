@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/landontemp/Downloads/Roommate Dashboard UI Design PINK/src/components/**)",
+      "Read(//Users/landontemp/Downloads/Roommate Dashboard UI Design PINK/**)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(npm install)",
+      "Bash(npm run build)",
+      "Bash(perl:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
