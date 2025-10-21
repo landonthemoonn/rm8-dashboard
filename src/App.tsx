@@ -5,17 +5,20 @@ import { ProfileCards } from './components/ProfileCards';
 import { ChoresTracker } from './components/ChoresTracker';
 import { DogWalkSchedule } from './components/DogWalkSchedule';
 import { DogWalkingApp } from './components/DogWalkingApp';
+import { DogWalkWidget } from './components/DogWalkWidget';
 import { ExpensesWidget } from './components/ExpensesWidget';
 import { NotesWidget } from './components/NotesWidget';
 import { FloatingActionButtons } from './components/FloatingActionButtons';
 import { NotificationBanners } from './components/NotificationBanners';
 import { PhotoGallery } from './components/PhotoGallery';
 import { SharedCalendar } from './components/SharedCalendar';
+import { EnhancedCalendar } from './components/EnhancedCalendar';
 import { RoommateAgreement } from './components/RoommateAgreement';
 import { HouseRulesQuickRef } from './components/HouseRulesQuickRef';
 import { RoommateSchedules } from './components/RoommateSchedules';
 import { CentralAIAssistant } from './components/CentralAIAssistant';
 import { WeeklyCheckIn } from './components/WeeklyCheckIn';
+import { DashboardWrapper } from './components/DashboardWrapper';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from './components/ui/sheet';
 
 export default function App() {
@@ -42,6 +45,7 @@ export default function App() {
   };
 
   return (
+    <DashboardWrapper>
     <div className="min-h-screen w-full overflow-x-hidden relative">
       {/* Animated Background */}
       <div className="fixed inset-0 -z-10">
@@ -298,5 +302,6 @@ export default function App() {
         </SheetContent>
       </Sheet>
     </div>
+    </DashboardWrapper>
   );
 }

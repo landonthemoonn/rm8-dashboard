@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { ScrollArea } from './ui/scroll-area';
 import { Badge } from './ui/badge';
+import { sendMessageToGemini } from '../services/geminiService';
 
 interface Message {
   id: number;
@@ -22,34 +23,15 @@ const suggestedPrompts = [
   "Who owes money to whom?",
 ];
 
-const getAIResponse = (userMessage: string): string => {
-  const lowerMessage = userMessage.toLowerCase();
-  
-  if (lowerMessage.includes('kepler') || lowerMessage.includes('dog') || lowerMessage.includes('walk')) {
-    return "🐕 Based on the walk history, Alex has been crushing it this week with 5 walks! Nick is next in the rotation. Kepler's average walk time is 23 minutes, and he's had 3 bathroom breaks today. Want me to start a walk timer?";
+// This function now uses Gemini AI API
+const getAIResponse = async (userMessage: string): Promise<string> => {
+  try {
+    const response = await sendMessageToGemini(userMessage);
+    return response;
+  } catch (error) {
+    console.error('Error getting AI response:', error);
+    return "Sorry, I'm having trouble connecting right now. Please try again!";
   }
-  
-  if (lowerMessage.includes('chore') || lowerMessage.includes('task') || lowerMessage.includes('clean')) {
-    return "📋 Quick chore update: You have 2 overdue tasks - Kitchen Cleanup (assigned to Alex, due 2 days ago) and Trash Day (Landon's turn). The bathroom was just cleaned yesterday by Nick. Should I send reminders to the team?";
-  }
-  
-  if (lowerMessage.includes('expense') || lowerMessage.includes('money') || lowerMessage.includes('owe') || lowerMessage.includes('bill')) {
-    return "💰 Here's the money situation: Alex owes $45 to the house (groceries + utilities). Nick is all settled up! Landon paid $120 for internet this month. Total house expenses this month: $387. Want me to send payment reminders?";
-  }
-  
-  if (lowerMessage.includes('event') || lowerMessage.includes('calendar') || lowerMessage.includes('schedule')) {
-    return "📅 Coming up: Game Night on Oct 16 at 8 PM (everyone's attending!), Grocery Run on Oct 13 at 6 PM (Jordan & Sam), and Landlord Inspection on Oct 15 at 2 PM. I can add these to your personal calendar if you'd like!";
-  }
-  
-  if (lowerMessage.includes('summary') || lowerMessage.includes('today') || lowerMessage.includes('overview')) {
-    return "✨ Today's Snapshot: Kepler had 2 walks (morning & afternoon), 3 chores completed, 1 new expense added ($32 pizza night), and you have a house meeting scheduled for 7 PM. Overall house vibe: 🔥 Everyone's on track!";
-  }
-  
-  if (lowerMessage.includes('rule') || lowerMessage.includes('quiet') || lowerMessage.includes('guest')) {
-    return "📜 Key house rules: Quiet hours 10 PM - 8 AM, guests are welcome (just give a heads up!), clean up after cooking, and Kepler gets fed at 7 AM & 6 PM. Need me to pull up the full agreement?";
-  }
-  
-  return "🤖 I'm your RoomieHub AI! I can help you with chores, expenses, Kepler's care, house events, and more. Try asking me about who's turn it is for something, or say 'help' for more ideas!";
 };
 
 export function CentralAIAssistant() {
@@ -86,20 +68,35 @@ export function CentralAIAssistant() {
       timestamp: new Date(),
     };
 
+    const currentInput = inputValue;
     setMessages([...messages, userMessage]);
     setInputValue('');
     setIsTyping(true);
 
-    setTimeout(() => {
+    try {
+      // Get AI response using Gemini API
+      const responseText = await getAIResponse(currentInput);
+
       const aiResponse: Message = {
         id: Date.now() + 1,
         role: 'assistant',
-        content: getAIResponse(inputValue),
+        content: responseText,
         timestamp: new Date(),
       };
+
       setMessages((prev) => [...prev, aiResponse]);
+    } catch (error) {
+      console.error('Error in handleSendMessage:', error);
+      const errorMessage: Message = {
+        id: Date.now() + 1,
+        role: 'assistant',
+        content: "Sorry, I encountered an error. Please try again!",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1000 + Math.random() * 1000);
+    }
   };
 
   const handlePromptClick = (prompt: string) => {
